@@ -199,7 +199,7 @@ class Translator(ABC):
         )
         return False
 
-    def _get_genomic_ac(self, chrom: str, build: Assembly) -> str:
+    def _get_genomic_ac(self, chrom: str, build: Assembly | str) -> str:
         """Return a RefSeq genomic accession given a chromosome and a reference build
 
         :param chrom: A chromosome number
@@ -208,8 +208,9 @@ class Translator(ABC):
         :raise ValueError: if unable to retrieve genomic accession
         """
         sr = self.fusor.cool_seq_tool.seqrepo_access
+        build_id = build.value if isinstance(build, Assembly) else build
         alias_list, errors = sr.translate_identifier(
-            f"{build}:{chrom}", target_namespaces="refseq"
+            f"{build_id}:{chrom}", target_namespaces="refseq"
         )
         if errors:
             statement = f"Genomic accession for {chrom} could not be retrieved"
