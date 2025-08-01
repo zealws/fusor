@@ -207,6 +207,10 @@ class Translator(ABC):
         :return: The corresponding refseq genomic accession
         :raise ValueError: if unable to retrieve genomic accession
         """
+        if self.fusor._disable_seqrepo:
+            # FIXME: this method should be moved into fusor (?)
+            _logger.warning("SeqRepo disabled! No genomic accession available.")
+            return ""
         sr = self.fusor.cool_seq_tool.seqrepo_access
         build_id = build.value if isinstance(build, Assembly) else build
         alias_list, errors = sr.translate_identifier(
