@@ -67,6 +67,8 @@ class FUSOR:
         :param cool_seq_tool: Cool-Seq-Tool instance
         :param gene_database: gene normalizer database instance
         """
+        self._disable_gene_normalizer = True
+
         self._gene_database = gene_database
         self._gene_normalizer = None
 
@@ -603,6 +605,8 @@ class FUSOR:
         :return: Tuple with gene and None value for warnings if
             successful, and None value with warning string if unsuccessful
         """
+        if self._disable_gene_normalizer:
+            return None, "disabled"
         gene_norm_resp = self.gene_normalizer.normalize(query)
         if gene_norm_resp.match_type:
             gene = gene_norm_resp.gene
