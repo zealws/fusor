@@ -67,6 +67,8 @@ class FUSOR:
         :param cool_seq_tool: Cool-Seq-Tool instance
         :param gene_database: gene normalizer database instance
         """
+        self._disable_uta = True
+
         self._gene_database = gene_database
         self._gene_normalizer = None
 
@@ -301,6 +303,8 @@ class FUSOR:
 
         :return: Transcript Segment Element, warning
         """
+        if self._disable_uta:
+            return None, ["disabled"]
         if tx_to_genomic_coords:
             data = await self.cool_seq_tool.ex_g_coords_mapper.tx_segment_to_genomic(
                 **kwargs
