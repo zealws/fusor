@@ -67,14 +67,49 @@ class FUSOR:
         :param cool_seq_tool: Cool-Seq-Tool instance
         :param gene_database: gene normalizer database instance
         """
-        if not gene_database:
-            gene_database = create_db()
-        self.gene_normalizer = QueryHandler(gene_database)
+        self._gene_database = gene_database
+        self._gene_normalizer = None
 
-        if not cool_seq_tool:
-            cool_seq_tool = CoolSeqTool()
-        self.cool_seq_tool = cool_seq_tool
-        self.seqrepo = self.cool_seq_tool.seqrepo_access.sr
+        self._cool_seq_tool = cool_seq_tool
+        self._seqrepo = None
+
+    @property
+    def gene_database(self):
+        """
+        :return: the gene-normalizer's connection to the UTA database
+        """
+        if not self._gene_database:
+            self._gene_database = create_db()
+        return self._gene_database
+
+    @property
+    def gene_normalizer(self) -> QueryHandler:
+        """
+        :return: the QueryHandler client for gene-normalizer
+        """
+        if not self._gene_normalizer:
+            self._gene_normalizer = QueryHandler(self.gene_database)
+        return self._gene_normalizer
+
+    @property
+    def cool_seq_tool(self) -> CoolSeqTool:
+        """
+        :return: the client for CoolSeqTool
+        """
+        if not self._cool_seq_tool:
+            self._cool_seq_tool = CoolSeqTool()
+        return self._cool_seq_tool
+
+    @property
+    def seqrepo(self):
+        """
+        :return: the client for SeqRepo, accessed through cool-seq-tool
+        """
+        if not self._seqrepo:
+            self._seqrepo = self.cool_seq_tool.seqrepo_access.sr
+        return self._seqrepo
+
+
 
     @staticmethod
     def _contains_element_type(kwargs: dict, elm_type: StructuralElementType) -> bool:
